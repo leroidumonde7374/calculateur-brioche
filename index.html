@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#06b6d4">
+    <title>Calculateur de Brioche</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Icône Wheat
+        function Wheat({ size = 24, className = "" }) {
+            return (
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={size}
+                    height={size}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={className}
+                >
+                    <path d="M2 22 16 8" />
+                    <path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" />
+                    <path d="M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" />
+                    <path d="M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" />
+                    <path d="M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z" />
+                    <path d="M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z" />
+                    <path d="M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z" />
+                    <path d="M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z" />
+                </svg>
+            );
+        }
+
+        // Icône Scale
+        function Scale({ size = 24, className = "" }) {
+            return (
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={size}
+                    height={size}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={className}
+                >
+                    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
+                    <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
+                    <path d="M7 21h10" />
+                    <path d="M12 3v18" />
+                    <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
+                </svg>
+            );
+        }
+
+        function IngredientRow({ label, value, unit, subtext }) {
+            return (
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-cyan-50 transition-colors">
+                    <span className="text-gray-700 font-medium">
+                        {label}
+                        {subtext && <span className="text-xs text-gray-500 ml-1">{subtext}</span>}
+                    </span>
+                    <span className="text-cyan-600 font-semibold">
+                        {value}{unit}
+                    </span>
+                </div>
+            );
+        }
+
+        function BriocheCalculator() {
+            const [farine, setFarine] = useState(500);
+            
+            const baseRecipe = {
+                farine: 500,
+                beurre: 250,
+                oeufs: 5,
+                sucre: 50,
+                sel: 10,
+                levureFraiche: 20,
+                lait: 100
+            };
+            
+            const ratio = farine / baseRecipe.farine;
+            const levureFraiche = Math.round(baseRecipe.levureFraiche * ratio);
+            const levureInstantanee = Math.round(levureFraiche / 3);
+            
+            const ingredients = {
+                farine: farine,
+                beurre: Math.round(baseRecipe.beurre * ratio),
+                oeufs: Math.round(baseRecipe.oeufs * ratio * 10) / 10,
+                sucre: Math.round(baseRecipe.sucre * ratio),
+                sel: Math.round(baseRecipe.sel * ratio),
+                levureFraiche: levureFraiche,
+                levureInstantanee: levureInstantanee,
+                lait: Math.round(baseRecipe.lait * ratio)
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4">
+                    <div className="max-w-md mx-auto">
+                        <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-t-3xl p-6 shadow-lg">
+                            <div className="flex items-center justify-center gap-3 mb-2">
+                                <Wheat size={32} className="text-white" />
+                                <h1 className="text-3xl font-bold text-white">Brioche</h1>
+                            </div>
+                            <p className="text-cyan-100 text-center text-sm">Calculateur de recette</p>
+                        </div>
+
+                        <div className="bg-white rounded-b-3xl shadow-lg p-6">
+                            <div className="mb-8">
+                                <div className="flex items-center justify-between mb-3">
+                                    <label className="text-gray-700 font-semibold flex items-center gap-2">
+                                        <Scale size={20} className="text-cyan-500" />
+                                        Farine
+                                    </label>
+                                    <span className="text-2xl font-bold text-cyan-600">{farine}g</span>
+                                </div>
+                                
+                                <input
+                                    type="range"
+                                    min="100"
+                                    max="1000"
+                                    step="50"
+                                    value={farine}
+                                    onChange={(e) => setFarine(Number(e.target.value))}
+                                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                                />
+                                
+                                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>100g</span>
+                                    <span>1000g</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-cyan-500">
+                                    Ingrédients
+                                </h2>
+                                
+                                <IngredientRow label="Beurre" value={ingredients.beurre} unit="g" />
+                                <IngredientRow label="Œufs" value={ingredients.oeufs} unit="" />
+                                <IngredientRow label="Sucre" value={ingredients.sucre} unit="g" />
+                                <IngredientRow label="Sel" value={ingredients.sel} unit="g" />
+                                <IngredientRow label="Levure fraîche" value={ingredients.levureFraiche} unit="g" />
+                                <IngredientRow label="Levure instantanée" value={ingredients.levureInstantanee} unit="g" subtext="(équivalent)" />
+                                <IngredientRow label="Lait" value={ingredients.lait} unit="ml" />
+                            </div>
+
+                            <div className="mt-8 p-4 bg-gradient-to-r from-cyan-50 to-gray-50 rounded-2xl">
+                                <h3 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-cyan-500 rounded-full"></span>
+                                    Conseil
+                                </h3>
+                                <p className="text-sm text-gray-600 leading-relaxed">
+                                    Pour une brioche moelleuse, pensez à bien pétrir la pâte et laissez-la lever dans un endroit chaud pendant 2 heures.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<BriocheCalculator />, document.getElementById('root'));
+    </script>
+</body>
+</html>
